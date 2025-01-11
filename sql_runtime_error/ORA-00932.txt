@@ -1,0 +1,30 @@
+{
+    "category": "Oracle SQL Errors",
+    "entries": [
+      {
+        "error_code": "ORA-00932",
+        "error_message": "expression is of data type INTERVAL DAY TO SECOND, which is incompatible with expected data type NUMBER",
+        "possible_issues": [
+          {
+            "cause":
+            [
+              "This ADW Oracle query was converted from a Vertica query.",
+              "he query attempts to convert the duration to a numeric type. The duration may be the difference between two timestamps.",
+              "Vitica can directly convert the duration into a numeric value in days.",
+              "ADW Oracle queries cannot be used directly for calculations or comparisons that require numeric values ​​without explicit conversions。"
+            ],
+            "check":[
+              "Check if the query tries to get the difference between two timestamps and put the result into a numeric type。"
+            ]
+            "resolution": [
+              "Convert duration to days using "extract( day from (duration) )"
+            ],
+            "example": {
+                "original_query": "select (tableA.timestamp1 - tableA.timestamp2) daysdiff from tableA",
+                "fixed_query": "select extract( day from (tableA.timestamp1 - tableA.timestamp2) ) daysdiff from tableA"
+            }
+          }
+        ]
+      }
+    ]
+  }

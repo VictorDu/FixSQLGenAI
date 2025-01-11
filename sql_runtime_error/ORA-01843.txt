@@ -1,0 +1,40 @@
+{
+    "category": "Oracle SQL Errors",
+    "entries": [
+      {
+        "error_code": "ORA-01843",
+        "error_message": "An invalid month was specified.",
+        "possible_issues": [
+          {
+            "issue_cause": [
+              "The SQL query issue arises from comparing a DATE-typed/TIMESTAMP-typed column with a date-formatted string.",
+              "This ADW Oracle query was converted from a Vertica or Snowflake query.",
+              "Vertica or Snowflake can automatically convert string literals to the required DATE or TIMESTAMP type in comparisons, provided the string format matches the default or expected format.",
+              "ADW Oracle requires explicit type conversion of string literals to DATE or TIMESTAMP using functions like TO_DATE or TO_TIMESTAMP."
+            ],
+            "how_to_detect": [
+              "Check if the ADW SQL query comparing a column with a date-formatted string."
+              "Check the column type of the table. If the column type is the date type or timestamp type, this query has the risk of this error. Otherwise, there is no risk for this error."
+            ]
+            "resolution": [
+              "Convert date-formatted string to timestamp using following command 'TO_TIMESTAMP(<date>, <format>)'"
+            ],
+            "example": [{
+                "original_adw_query": "SELECT EVENT_ID FROM EVENTS WHERE EVENT_START > '01-02-2100';",
+                "table_schemas": "Here are the schemas of related tables including the column name and type: ['EVENTS': {'EVENT_START': 'TIMESTAMP(9)'}]",
+                "error_analysis": "The 'EVENT_START' column of the 'EVENTS' table is the timestamp type and the '01-02-2100' in the query is date-formatted string. This query has the risk of this error.",
+                "how_to_fix": "Convert the '01-02-2100' string to the timestamp type explicitly with the 'TO_TIMESTAMP(<date>, <format>)' command.",
+                "fixed_adw_query": "SELECT EVENT_ID FROM EVENTS WHERE EVENT_START > TO_TIMESTAMP('01-02-2100', 'DD-MM-YYYY');"
+            },
+            {
+                "original_adw_query": "SELECT EVENT_ID FROM EVENTS WHERE EVENT_START > '2025-01-01';",
+                "table_schemas": "Here are the schemas of related tables including the column name and type: ['EVENTS': {'EVENT_START': 'TIMESTAMP(9)'}]",
+                "error_analysis": "The 'EVENT_START' column of the 'EVENTS' table is the timestamp type and the '2025-01-01' in the query is date-formatted string. This query has the risk of this error.",
+                "how_to_fix": "Convert the '2025-01-01' string to the timestamp type explicitly with the 'TO_TIMESTAMP(<date>, <format>)' command.",
+                "fixed_adw_query": "SELECT EVENT_ID FROM EVENTS WHERE EVENT_START > TO_TIMESTAMP('2025-01-01', 'YYYY-MM-DD');"
+            }]
+          }
+        ]
+      }
+    ]
+  }

@@ -1,0 +1,17 @@
+version: 0.1
+component: build
+timeoutInSeconds: 1000
+shell: bash
+env:
+  variables:
+  # exportedVariables are made available to use as parameters in sucessor Build Pipeline stages
+  # For this Build to run, the Build Pipeline needs to have a BUILDRUN_HASH parameter set
+  exportedVariables:
+    - BUILDRUN_HASH
+
+steps:
+  - type: Command
+    name: "List files"
+    command: |
+      oci os object list --bucket-name qct_error_messages --region us-chicago-1
+      echo "List files in the bucket..."
